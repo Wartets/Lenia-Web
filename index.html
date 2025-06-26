@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Lenia</title>
+	<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="container">
+        <div class="simulation-container">
+            <div class="status">
+                <div>Statut: <span id="status">Ready</span></div>
+                <div>Images: <span id="frameCount">0</span></div>
+                <div>FPS: <span id="fpsCounter">0</span></div>
+            </div>
+			
+            <canvas id="leniaCanvas" width="800" height="800"></canvas>
+            
+            <div class="controls">
+                <button id="startBtn">Start</button>
+                <button id="pauseBtn" disabled>Pause</button>
+                <button id="resetBtn">Reset</button>
+                <button id="stepBtn">Step</button>
+                <select id="simulationType">
+                    <option value="39">Fish</option>
+                    <option value="random">Random</option>
+                </select>
+								<div class="remap-controls">
+					<label>k: <input type="range" id="kSlider" min="0" max="10" step="0.01" value="0"><span id="kValue">0</span></label>
+					<label>a: <input type="range" id="aSlider" min="0" max="1" step="0.01" value="1"><span id="aValue">1</span></label>
+					<label><input type="checkbox" id="autoMode"> Mode auto</label>
+				</div>
+            </div>
+        </div>
+    </div>
+	
+	<script src="https://cdn.jsdelivr.net/npm/gpu.js@2.12.0/dist/gpu-browser.min.js"></script>
+	<script src="script.js"></script>
+</body>
+</html>
