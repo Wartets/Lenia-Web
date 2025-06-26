@@ -1,5 +1,5 @@
 // Paramètres de simulation
-const DT = 0.2;
+const DT = 0.1;
 const R = 10;
 const MU = [0.156, 0.193, 0.342];
 const SIGMA = [0.0118, 0.049, 0.0891];
@@ -20,6 +20,11 @@ const simulationType = document.getElementById('simulationType');
 const statusText = document.getElementById('status');
 const frameCount = document.getElementById('frameCount');
 const fpsCounter = document.getElementById('fpsCounter');
+const gridWidthInput = document.getElementById('gridWidth');
+const gridHeightInput = document.getElementById('gridHeight');
+const muControls = document.getElementById('muControls');
+const sigmaControls = document.getElementById('sigmaControls');
+const bsControls = document.getElementById('bsControls');
 document.getElementById('kSlider').addEventListener('input', (e) => {
     k = parseFloat(e.target.value);
     document.getElementById('kValue').textContent = k.toFixed(2);
@@ -35,6 +40,15 @@ document.getElementById('autoMode').addEventListener('change', (e) => {
 	if (autoMode) updateAutoRemap();
 	drawGrid();
 });
+gridWidthInput.addEventListener('change', function() {
+    GRID_WIDTH = parseInt(this.value);
+    initSimulation();
+});
+
+gridHeightInput.addEventListener('change', function() {
+    GRID_HEIGHT = parseInt(this.value);
+    initSimulation();
+});
 
 // Variables d'état
 let grid;
@@ -44,8 +58,76 @@ let currentFrame = 0;
 let isRunning = false;
 let lastTimestamp = 0;
 let frameTimes = [];
-const GRID_WIDTH = 70;
-const GRID_HEIGHT = GRID_WIDTH;
+let GRID_WIDTH = 70;
+let GRID_HEIGHT = 70;
+
+function createParameterControls() {
+    muControls.innerHTML = '<h4>MU Values:</h4>';
+    sigmaControls.innerHTML = '<h4>SIGMA Values:</h4>';
+    bsControls.innerHTML = '<h4>BS Values:</h4>';
+    
+    MU.forEach((value, i) => {
+        const control = document.createElement('div');
+        control.className = 'channel-control';
+        control.innerHTML = `
+            <label>Channel ${i}: 
+                <input type="number" class="mu-input" data-index="${i}" 
+                       step="0.001" value="${value}">
+            </label>
+        `;
+        muControls.appendChild(control);
+    });
+    
+    SIGMA.forEach((value, i) => {
+        const control = document.createElement('div');
+        control.className = 'channel-control';
+        control.innerHTML = `
+            <label>Channel ${i}: 
+                <input type="number" class="sigma-input" data-index="${i}" 
+                       step="0.001" value="${value}">
+            </label>
+        `;
+        sigmaControls.appendChild(control);
+    });
+    
+    BS.forEach((value, i) => {
+        const control = document.createElement('div');
+        control.className = 'channel-control';
+        control.innerHTML = `
+            <label>Channel ${i}: 
+                <input type="text" class="bs-input" data-index="${i}" 
+                       value="${value.join(',')}">
+            </label>
+        `;
+        bsControls.appendChild(control);
+    });
+    
+    document.querySelectorAll('.mu-input').forEach(input => {
+        input.addEventListener('change', function() {
+            const index = parseInt(this.dataset.index);
+            MU[index] = parseFloat(this.value);
+            initSimulation();
+        });
+    });
+    
+    document.querySelectorAll('.sigma-input').forEach(input => {
+        input.addEventListener('change', function() {
+            const index = parseInt(this.dataset.index);
+            SIGMA[index] = parseFloat(this.value);
+            initSimulation();
+        });
+    });
+    
+    document.querySelectorAll('.bs-input').forEach(input => {
+        input.addEventListener('change', function() {
+            const index = parseInt(this.dataset.index);
+            const values = this.value.split(',').map(parseFloat);
+            BS[index] = values;
+            initKernels();
+            initSimulation();
+        });
+    });
+}
 
 const cmap = [
     [0, 0.5, 0], [68, 1, 84], [71, 44, 122], [59, 81, 139], [44, 113, 142],
@@ -121,107 +203,6 @@ function updateAutoRemap() {
 
     k = Math.max(0.5, Math.min(10, 1.7 / (std + 1e-4)));
     a = Math.max(0.05, Math.min(0.95, 0.5 + (mean - 0.5) * 1.5));
-}
-
-function initGPUKernels() {
-    try {
-		return false;
-        // Kernel de convolution
-        convolveKernels = BS.map((b, idx) => {
-            // Construire le kernel pour cette couche
-            let kernelArray = Array(KERNEL_SIZE).fill().map(() => Array(KERNEL_SIZE).fill(0));
-            let total = 0;
-
-            for (let i = 0; i < KERNEL_SIZE; i++) {
-                for (let j = 0; j < KERNEL_SIZE; j++) {
-                    const dx = i - R;
-                    const dy = j - R;
-                    const distance = Math.sqrt(dx * dx + dy * dy) / R;
-
-                    const ringIndex = Math.floor(distance * b.length);
-                    if (ringIndex < b.length) {
-                        const frac = distance * b.length - ringIndex;
-                        const value = b[ringIndex] * Math.exp(-Math.pow(frac - 0.5, 2) / (2 * Math.pow(0.15, 2)));
-                        kernelArray[i][j] = value;
-                        total += value;
-                    }
-                }
-            }
-
-            // Normaliser le kernel
-            for (let i = 0; i < KERNEL_SIZE; i++) {
-                for (let j = 0; j < KERNEL_SIZE; j++) {
-                    kernelArray[i][j] /= total;
-                }
-            }
-
-            return gpu.createKernel(function(grid) {
-                let sum = 0;
-                const kSize = this.constants.kSize;
-                const kRadius = this.constants.kRadius;
-                const height = this.constants.height;
-                const width = this.constants.width;
-                
-                for (let ki = 0; ki < kSize; ki++) {
-                    for (let kj = 0; kj < kSize; kj++) {
-                        const ii = (this.thread.y + ki - kRadius + height) % height;
-                        const jj = (this.thread.x + kj - kRadius + width) % width;
-                        sum += grid[ii][jj] * this.constants.kernel[ki][kj];
-                    }
-                }
-                
-                return sum;
-            }).setConstants({
-                kernel: kernelArray,
-                kSize: KERNEL_SIZE,
-                kRadius: R,
-                height: GRID_HEIGHT,
-                width: GRID_WIDTH
-            }).setOutput([GRID_WIDTH, GRID_HEIGHT]);
-        });
-        
-        // Kernel de croissance
-        growthKernel = gpu.createKernel(function(potential, mu, sigma) {
-            const x = potential[this.thread.y][this.thread.x];
-            const t = (x - mu) / sigma;
-            return 2 * Math.exp(-t * t / 2) - 1;
-        }).setOutput([GRID_WIDTH, GRID_HEIGHT]);
-        
-        // Kernel de moyenne
-        averageKernel = gpu.createKernel(function(term1, term2, term3) {
-            return (term1[this.thread.y][this.thread.x] + 
-                    term2[this.thread.y][this.thread.x] + 
-                    term3[this.thread.y][this.thread.x]) / 3;
-        }).setOutput([GRID_WIDTH, GRID_HEIGHT]);
-        
-        // Kernel de mise à jour
-        updateKernel = gpu.createKernel(function(grid, avgGrowth) {
-            const value = grid[this.thread.y][this.thread.x] + 
-                         this.constants.dt * avgGrowth[this.thread.y][this.thread.x];
-            return Math.max(0, Math.min(1, value));
-        }).setConstants({ dt: DT }).setOutput([GRID_WIDTH, GRID_HEIGHT]);
-        
-        // Kernel de rendu
-        drawKernel = gpu.createKernel(function(grid) {
-            const value = grid[this.thread.y][this.thread.x];
-            
-            // Palette de couleurs Viridis
-            if (value < 0.1) this.color(68/255, 1/255, 84/255, 1);
-            else if (value < 0.2) this.color(71/255, 44/255, 122/255, 1);
-            else if (value < 0.3) this.color(59/255, 81/255, 139/255, 1);
-            else if (value < 0.4) this.color(44/255, 113/255, 142/255, 1);
-            else if (value < 0.5) this.color(33/255, 144/255, 141/255, 1);
-            else if (value < 0.6) this.color(39/255, 173/255, 129/255, 1);
-            else if (value < 0.7) this.color(92/255, 200/255, 99/255, 1);
-            else if (value < 0.8) this.color(170/255, 220/255, 50/255, 1);
-            else this.color(253/255, 231/255, 36/255, 1);
-        }).setGraphical(true).setOutput([GRID_WIDTH, GRID_HEIGHT]);
-
-        return true;
-    } catch (e) {
-        console.error("Erreur d'initialisation GPU:", e);
-        return false;
-    }
 }
 
 function initKernels() {
@@ -312,6 +293,11 @@ function initRandomGrid() {
 }
 
 function initSimulation() {
+    if (canvas.width !== canvas.offsetWidth || canvas.height !== canvas.offsetHeight) {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+    }
+	
     if (isRunning) {
         cancelAnimationFrame(animationId);
         isRunning = false;
@@ -327,7 +313,6 @@ function initSimulation() {
         grid = initRandomGrid();
     }
     
-    // Initialiser nextGrid comme copie de grid
     nextGrid = grid.map(row => [...row]);
     
     drawGrid();
@@ -483,5 +468,6 @@ stepBtn.addEventListener('click', () => {
 simulationType.addEventListener('change', initSimulation);
 
 // Initialisation
+createParameterControls();
 initKernels();
 initSimulation();
