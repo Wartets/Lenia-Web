@@ -474,10 +474,10 @@ body::after {
 		flex-direction: column;
 	}
 	
-    .canvas-container {
+    /* .canvas-container {
         height: auto;
         min-height: 50vh;
-    }
+    } */
 	
 	.controls-container {
 		width: 100%;
@@ -506,9 +506,9 @@ body::after {
 		min-width: unset;
 	}
 	
-    .canvas-container {
+    /* .canvas-container {
         height: 50vh;
-    }
+    } */
 }
 
 @media (max-width: 600px) {
@@ -521,9 +521,9 @@ body::after {
 		gap: 10px;
 	}
 	
-	.canvas-container {
+	/* .canvas-container {
 		height: 50vh;
-	}
+	} */
 	
 	.params-panel, .actions-panel {
 		padding: 15px;
@@ -567,9 +567,9 @@ body::after {
 		font-size: 1.5rem;
 	}
 	
-	.canvas-container {
+	/* .canvas-container {
 		height: 45vh;
-	}
+	} */
 	
 	.params-panel h2, .actions-panel h2 {
 		font-size: 1.2rem;
@@ -586,15 +586,15 @@ body::after {
 }
 
 @media (max-width: 600px) and (orientation: portrait) {
-	.canvas-container {
+	/* .canvas-container {
 		height: 50vh;
-	}
+	} */
 }
 
 @media (max-width: 900px) and (orientation: landscape) {
-	.canvas-container {
+	/* .canvas-container {
 		height: 85vh;
-	}
+	} */
 	
 	.controls-container {
 		flex-direction: row;
