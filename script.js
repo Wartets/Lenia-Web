@@ -623,18 +623,44 @@ function drawGrid() {
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
+    ctx.imageSmoothingEnabled = false;
+    
+    const imageData = ctx.createImageData(canvas.width, canvas.height);
+    const data = imageData.data;
+    
     for (let i = 0; i < GRID_HEIGHT; i++) {
         for (let j = 0; j < GRID_WIDTH; j++) {
             const value = grid[i][j];
-            ctx.fillStyle = viridisColor(value);
-            ctx.fillRect(
-                j * cellWidth, 
-                i * cellHeight, 
-                cellWidth, 
-                cellHeight
-            );
+            const color = viridisColor(value);
+            
+            const rgb = color.match(/\d+/g);
+            const r = parseInt(rgb[0]);
+            const g = parseInt(rgb[1]);
+            const b = parseInt(rgb[2]);
+            
+            const x = Math.floor(j * cellWidth);
+            const y = Math.floor(i * cellHeight);
+            const width = Math.ceil(cellWidth);
+            const height = Math.ceil(cellHeight);
+            
+            for (let dy = 0; dy < height; dy++) {
+                for (let dx = 0; dx < width; dx++) {
+                    const px = (y + dy) * canvas.width + (x + dx);
+                    const index = px * 4;
+                    
+                    if (index + 3 < data.length) { 
+                        data[index] = r;
+                        data[index+1] = g;
+                        data[index+2] = b;
+                        data[index+3] = 255;
+                    }
+                }
+            }
         }
     }
+    
+    // Dessiner l'image en une seule opération
+    ctx.putImageData(imageData, 0, 0);
 }
 
 function evolve() {
