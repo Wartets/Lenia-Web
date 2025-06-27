@@ -27,8 +27,17 @@
 						<input type="number" id="gridHeight" min="10" max="200" value="70">
 					</label>
 				</div>
+				<div class="dt-control">
+					<label>DT (Step Size): 
+						<input type="number" id="dtInput" step="0.01" value="0.1">
+					</label>
+				</div>
 				<div class="kernel-controls">
 					<h3>Kernel Parameters</h3>
+					<div class="channel-buttons">
+						<button id="addChannel">+ Add Channel</button>
+						<button id="removeChannel">- Remove Channel</button>
+					</div>
 					<div id="muControls"></div>
 					<div id="sigmaControls"></div>
 					<div id="bsControls"></div>
