@@ -3,9 +3,30 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explore Lenia: A continuous cellular automata framework creating lifelike digital organisms through mathematical modeling and emergent complexity">
+    <meta name="keywords" content="Lenia, cellular automata, artificial life, mathematical biology, complex systems, Bert Wang-Chak Chan, emergence, self-organization">
+    <meta name="author" content="Bert Wang-Chak Chan, Wartets">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Lenia: Mathematical Foundations of Continuous Cellular Automata">
+    <meta property="og:description" content="Interactive exploration of Lenia's continuous cellular automata generating lifelike digital organisms">
+    <meta property="og:image" content="https://wartets.github.io/Wartets/img/LeniaWeb-card.png">
+    <meta property="og:url" content="https://wartets.github.io/Lenia-Web/">
 	<title>Lenia</title>
 	<link rel="stylesheet" href="style.css" />
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+	<meta property="og:image" content="https://wartets.github.io/Wartets/image/app-icon.jpg">
+	<link rel="icon" href="https://wartets.github.io/N-Body-Problem/image/browser-icon.png">
+	<meta name="robots" content="index, follow">
+    <meta name="apple-mobile-web-app-title" content="Lenia">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#000">
+
+    <meta name="twitter:card" content="https://wartets.github.io/Wartets/img/LeniaWeb-card.png">
+    <meta name="twitter:title" content="Lenia Simulation: Emergent Artificial Life">
+    <meta name="twitter:description" content="Discover the mathematical beauty of Lenia's continuous cellular automata">
+    <meta name="twitter:image" content="https://wartets.github.io/Wartets/img/LeniaWeb-card.png"> 
+    <link rel="canonical" href="https://wartets.github.io/Lenia-Web/">
 </head>
 <body>
 	<header>
@@ -401,17 +422,17 @@
             
             <div class="equation-block">
                 \[
-                \text{remap}(a; k, \alpha) = \alpha \cdot \text{remap}_1(a; k) + (1 - \alpha) \cdot \text{remap}_2(a)
+                \text{remap}(t, a, k) = a \cdot \text{remap}_1(t, k) + (1 - a) \cdot \text{remap}_2(t, k)
                 \]
             </div>
             
             <p>
                 where:
                 <ul>
-                    <li>\(\text{remap}_1(a; k) = \dfrac{1}{2} + \dfrac{1}{\pi} \arctan(k(2a - 1))\) (sigmoidal contrast enhancement)</li>
-                    <li>\(\text{remap}_2(a) = 4a(1 - a)\) (quadratic enhancement)</li>
-                    <li>\(k\): Sharpness parameter (typically 4-10)</li>
-                    <li>\(\alpha\): Mixing ratio between remap functions (typically 0.5)</li>
+                    <li>\(\text{remap}_1(t, k) = \dfrac{1}{2} + \dfrac{\arctan \left(k \left(t - \dfrac{1}{2}\right)\right)}{2 \cdot \arctan \left(\dfrac{k}{2} \right)} \)</li>
+                    <li>\(\text{remap}_2(t, k) = \dfrac{1}{2} + \left| t - \dfrac{1}{2} \right| ^ {2k+1} \cdot 2^{2k} \cdot \text{sgn} \left( t- \dfrac{1}{2} \right) \)</li>
+                    <li>\(k\): Sharpness parameter</li>
+                    <li>\(a\): Mixing ratio between remap functions</li>
                 </ul>
             </p>
             
