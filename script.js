@@ -1,9 +1,9 @@
 // Paramètres de simulation
-const DT = 0.1;
-const R = 10;
-const MU = [0.156, 0.193, 0.342];
-const SIGMA = [0.0118, 0.049, 0.0891];
-const BS = [[1, 5/12, 2/3], [1/12, 1], [1]];
+let DT = 0.1;
+let R = 10;
+let MU = [0.156, 0.193, 0.342];
+let SIGMA = [0.0118, 0.049, 0.0891];
+let BS = [[1, 5/12, 2/3], [1/12, 1], [1]];
 const KERNEL_SIZE = 2 * R + 1;
 let k = 0;
 let a = 1;
@@ -25,21 +25,28 @@ const gridHeightInput = document.getElementById('gridHeight');
 const muControls = document.getElementById('muControls');
 const sigmaControls = document.getElementById('sigmaControls');
 const bsControls = document.getElementById('bsControls');
+const addChannelBtn = document.getElementById('addChannel');
+const removeChannelBtn = document.getElementById('removeChannel');
+const dtInput = document.getElementById('dtInput');
+
 document.getElementById('kSlider').addEventListener('input', (e) => {
     k = parseFloat(e.target.value);
     document.getElementById('kValue').textContent = k.toFixed(2);
 	drawGrid();
 });
+
 document.getElementById('aSlider').addEventListener('input', (e) => {
     a = parseFloat(e.target.value);
     document.getElementById('aValue').textContent = a.toFixed(2);
 	drawGrid();
 });
+
 document.getElementById('autoMode').addEventListener('change', (e) => {
     autoMode = e.target.checked;
 	if (autoMode) updateAutoRemap();
 	drawGrid();
 });
+
 gridWidthInput.addEventListener('change', function() {
     GRID_WIDTH = parseInt(this.value);
     initSimulation();
@@ -49,6 +56,33 @@ gridHeightInput.addEventListener('change', function() {
     GRID_HEIGHT = parseInt(this.value);
     initSimulation();
 });
+
+addChannelBtn.addEventListener('click', () => {
+    MU.push((Math.random() * 0.9).toFixed(3));
+    SIGMA.push((Math.random() * 0.1).toFixed(3));
+    BS.push([1]);
+    
+    createParameterControls();
+    initKernels();
+    initSimulation();
+});
+
+removeChannelBtn.addEventListener('click', () => {
+    if (MU.length > 1) {
+        MU.pop();
+        SIGMA.pop();
+        BS.pop();
+        
+        createParameterControls();
+        initKernels();
+        initSimulation();
+    }
+});
+
+dtInput.addEventListener('change', function() {
+    DT = parseFloat(this.value) || 0.2;
+});
+
 
 // Variables d'état
 let grid;
@@ -127,6 +161,89 @@ function createParameterControls() {
             initSimulation();
         });
     });
+
+    bsControls.innerHTML = '<h4>BS Values:</h4>';
+    BS.forEach((channelValues, i) => {
+        const control = document.createElement('div');
+        control.className = 'channel-control';
+        control.innerHTML = `<label>Channel ${i}</label>`;
+        
+        const channelDiv = document.createElement('div');
+        channelDiv.className = 'bs-channel';
+        
+        channelValues.forEach((value, j) => {
+            const fraction = toFraction(value);
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = fraction;
+            input.className = 'fraction-input';
+            input.dataset.channel = i;
+            input.dataset.index = j;
+            
+            channelDiv.appendChild(input);
+        });
+        
+        control.appendChild(channelDiv);
+        bsControls.appendChild(control);
+    });
+    
+    document.querySelectorAll('.fraction-input').forEach(input => {
+        input.addEventListener('change', function() {
+            const channel = parseInt(this.dataset.channel);
+            const index = parseInt(this.dataset.index);
+            const value = parseFraction(this.value);
+            
+            BS[channel][index] = value;
+            
+            this.value = toFraction(value);
+            
+            initKernels();
+            initSimulation();
+        });
+    });
+}
+
+function toFraction(decimal) {
+    const tolerance = 1.0e-6;
+    const maxDenominator = 100;
+    
+    if (Math.abs(decimal) < tolerance) return "0";
+    if (Math.abs(1 - decimal) < tolerance) return "1";
+    
+    let numerator = 1;
+    let denominator = 1;
+    let error = decimal;
+    
+    for (let d = 1; d <= maxDenominator; d++) {
+        const n = Math.round(decimal * d);
+        const currentError = Math.abs(decimal - n/d);
+        
+        if (currentError < error) {
+            error = currentError;
+            numerator = n;
+            denominator = d;
+        }
+        
+        if (currentError < tolerance) break;
+    }
+    
+    // Simplifier la fraction
+    const gcd = (a, b) => b ? gcd(b, a % b) : a;
+    const divisor = gcd(numerator, denominator);
+    
+    numerator /= divisor;
+    denominator /= divisor;
+    
+    if (denominator === 1) return numerator.toString();
+    return `${numerator}/${denominator}`;
+}
+
+function parseFraction(input) {
+    if (input.includes('/')) {
+        const [num, den] = input.split('/').map(Number);
+        if (den !== 0) return num / den;
+    }
+    return parseFloat(input) || 0;
 }
 
 const cmap = [
@@ -247,7 +364,7 @@ function growth(x, mu, sigma) {
 }
 
 function initFishGrid() {
-	const grid = Array(GRID_HEIGHT).fill().map(() => Array(GRID_WIDTH).fill(0));
+    const grid = Array(GRID_HEIGHT).fill().map(() => Array(GRID_WIDTH).fill(0));
 	
 	const fish = [
 		[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.06, 0.1, 0.04, 0.02, 0.01, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
@@ -273,18 +390,23 @@ function initFishGrid() {
 		[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.09, 0.2, 0.22, 0.23, 0.23, 0.22, 0.3, 0.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 	];
 	
-	for (let k = 0; k < 1; k++) {
-		const x = Math.floor(GRID_HEIGHT/2 - fish.length/2);
-		const y = Math.floor(GRID_WIDTH/2 - fish[0].length/2);
-		
-		for (let i = 0; i < fish.length; i++) {
-			for (let j = 0; j < fish[0].length; j++) {
-				grid[x + i][y + j] = fish[i][j];
-			}
-		}
-	}
-	
-	return grid;
+    const centerX = Math.floor(GRID_HEIGHT/2 - fish.length/2);
+    const centerY = Math.floor(GRID_WIDTH/2 - fish[0].length/2);
+    
+    const startX = Math.max(0, centerX);
+    const startY = Math.max(0, centerY);
+    const endX = Math.min(GRID_HEIGHT, startX + fish.length);
+    const endY = Math.min(GRID_WIDTH, startY + fish[0].length);
+    
+    for (let i = startX; i < endX; i++) {
+        for (let j = startY; j < endY; j++) {
+            const fishI = i - startX;
+            const fishJ = j - startY;
+            grid[i][j] = fish[fishI][fishJ];
+        }
+    }
+    
+    return grid;
 }
 
 function initRandomGrid() {
