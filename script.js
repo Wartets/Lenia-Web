@@ -413,6 +413,69 @@ function initRandomGrid() {
 		Array(GRID_WIDTH).fill().map(() => Math.random()));
 }
 
+function initOrbiumGrid() {
+    const grid = Array(GRID_HEIGHT).fill().map(() => Array(GRID_WIDTH).fill(0));
+    const centerX = Math.floor(GRID_HEIGHT/2);
+    const centerY = Math.floor(GRID_WIDTH/2);
+    
+    for (let i = -10; i <= 10; i++) {
+        for (let j = -10; j <= 10; j++) {
+            const distance = Math.sqrt(i*i + j*j) / 10;
+            if (distance <= 1) {
+                const value = Math.exp(-30 * Math.pow(distance - 0.7, 2));
+                const x = (centerX + i + GRID_HEIGHT) % GRID_HEIGHT;
+                const y = (centerY + j + GRID_WIDTH) % GRID_WIDTH;
+                grid[x][y] = value;
+            }
+        }
+    }
+    
+    return grid;
+}
+
+function initChromiumGrid() {
+    const grid = Array(GRID_HEIGHT).fill().map(() => Array(GRID_WIDTH).fill(0));
+    const centerX = Math.floor(GRID_HEIGHT/2);
+    const centerY = Math.floor(GRID_WIDTH/2);
+    const val = Math.floor(Math.min(GRID_HEIGHT, GRID_HEIGHT) / 2);
+    for (let i = -val; i <= val; i++) {
+        for (let j = -val; j <= val; j++) {
+            const angle = Math.atan2(j, i);
+            const distance = Math.sqrt(i*i + j*j) / val;
+            const wave = 0.5 * (1 + Math.cos(5 * angle));
+            
+            if (distance <= 1) {
+                const value = wave * Math.exp(-20 * Math.pow(distance - 0.6, 2));
+                const x = (centerX + i + GRID_HEIGHT) % GRID_HEIGHT;
+                const y = (centerY + j + GRID_WIDTH) % GRID_WIDTH;
+                grid[x][y] = Math.min(1, value);
+            }
+        }
+    }
+    
+    return grid;
+}
+
+function initCyanorGrid() {
+    const grid = Array(GRID_HEIGHT).fill().map(() => Array(GRID_WIDTH).fill(0));
+    const centerX = Math.floor(GRID_HEIGHT/2);
+    const centerY = Math.floor(GRID_WIDTH/2);
+    
+    for (let i = -12; i <= 12; i++) {
+        for (let j = -12; j <= 12; j++) {
+            const distance = Math.sqrt(i*i + j*j) / 12;
+            if (distance > 0.3 && distance < 0.9) {
+                const value = 0.8 * Math.exp(-15 * Math.pow(distance - 0.6, 2));
+                const x = (centerX + i + GRID_HEIGHT) % GRID_HEIGHT;
+                const y = (centerY + j + GRID_WIDTH) % GRID_WIDTH;
+                grid[x][y] = value;
+            }
+        }
+    }
+    
+    return grid;
+}
+
 function initSimulation() {
 	if (isRunning) {
 		cancelAnimationFrame(animationId);
@@ -422,12 +485,23 @@ function initSimulation() {
 	currentFrame = 0;
 	frameCount.textContent = currentFrame;
 	
-	const type = simulationType.value;
-	if (type === "39") {
-		grid = initFishGrid();
-	} else {
-		grid = initRandomGrid();
-	}
+    const type = simulationType.value;
+    switch(type) {
+        case "fish":
+            grid = initFishGrid();
+            break;
+        case "orbium":
+            grid = initOrbiumGrid();
+            break;
+        case "chromium":
+            grid = initChromiumGrid();
+            break;
+        case "cyanor":
+            grid = initCyanorGrid();
+            break;
+        default:
+            grid = initRandomGrid();
+    }
 	
 	nextGrid = grid.map(row => [...row]);
 	
