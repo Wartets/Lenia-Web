@@ -7,6 +7,7 @@ let BS = [[1, 5/12, 2/3], [1/12, 1], [1]];
 const KERNEL_SIZE = 2 * R + 1;
 let k = 0;
 let a = 1;
+let interpolationFactor = 0;
 let autoMode = false;
 
 // Éléments DOM
@@ -45,6 +46,12 @@ document.getElementById('autoMode').addEventListener('change', (e) => {
 	autoMode = e.target.checked;
 	if (autoMode) updateAutoRemap();
 	drawGrid();
+});
+
+document.getElementById('interpolationSlider').addEventListener('input', (e) => {
+    interpolationFactor = parseFloat(e.target.value);
+    document.getElementById('interpolationValue').textContent = interpolationFactor.toFixed(2);
+    drawGrid();
 });
 
 gridWidthInput.addEventListener('change', function() {
@@ -226,7 +233,6 @@ function toFraction(decimal) {
 		if (currentError < tolerance) break;
 	}
 	
-	// Simplifier la fraction
 	const gcd = (a, b) => b ? gcd(b, a % b) : a;
 	const divisor = gcd(numerator, denominator);
 	
@@ -280,6 +286,35 @@ function viridisColor(t) {
 	const [r1, g1, b1] = cmap[i];
 	const [r2, g2, b2] = cmap[Math.min(i + 1, cmap.length - 1)];
 	return `rgb(${Math.round(r1 + frac * (r2 - r1))},${Math.round(g1 + frac * (g2 - g1))},${Math.round(b1 + frac * (b2 - b1))})`;
+}
+
+function bicubicInterpolation(x, y) {
+    const x0 = Math.floor(x);
+    const y0 = Math.floor(y);
+    const dx = x - x0;
+    const dy = y - y0;
+    
+    const xi0 = Math.max(0, Math.min(GRID_WIDTH - 1, x0));
+    const yi0 = Math.max(0, Math.min(GRID_HEIGHT - 1, y0));
+    const xi1 = Math.max(0, Math.min(GRID_WIDTH - 1, x0 + 1));
+    const yi1 = Math.max(0, Math.min(GRID_HEIGHT - 1, y0 + 1));
+    
+    const a = grid[yi0][xi0];
+    const b = grid[yi0][xi1];
+    const c = grid[yi1][xi0];
+    const d = grid[yi1][xi1];
+    
+    const bilinear = a * (1 - dx) * (1 - dy)
+                  + b * dx * (1 - dy)
+                  + c * (1 - dx) * dy
+                  + d * dx * dy;
+    
+    if (interpolationFactor > 0.5) {
+        const nearest = grid[dy < 0.5 ? yi0 : yi1][dx < 0.5 ? xi0 : xi1];
+        return bilinear * (1 - interpolationFactor) + nearest * interpolationFactor;
+    } else {
+		return bilinear;
+	}
 }
 
 function updateAutoRemap() {
@@ -616,6 +651,7 @@ function textureToArray(texture) {
 
 function drawGrid() {
     if (handleCanvasResize()) {
+        // Le canvas a été redimensionné
     }
     
     const cellWidth = canvas.width / GRID_WIDTH;
@@ -623,46 +659,68 @@ function drawGrid() {
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    ctx.imageSmoothingEnabled = false;
-    
-    const imageData = ctx.createImageData(canvas.width, canvas.height);
-    const data = imageData.data;
-    
-    for (let i = 0; i < GRID_HEIGHT; i++) {
-        for (let j = 0; j < GRID_WIDTH; j++) {
-            const value = grid[i][j];
-            const color = viridisColor(value);
-            
-            const rgb = color.match(/\d+/g);
-            const r = parseInt(rgb[0]);
-            const g = parseInt(rgb[1]);
-            const b = parseInt(rgb[2]);
-            
-            const x = Math.floor(j * cellWidth);
-            const y = Math.floor(i * cellHeight);
-            const width = Math.ceil(cellWidth);
-            const height = Math.ceil(cellHeight);
-            
-            for (let dy = 0; dy < height; dy++) {
-                for (let dx = 0; dx < width; dx++) {
-                    const px = (y + dy) * canvas.width + (x + dx);
-                    const index = px * 4;
-                    
-                    if (index + 3 < data.length) { 
-                        data[index] = r;
-                        data[index+1] = g;
-                        data[index+2] = b;
-                        data[index+3] = 255;
+    if (interpolationFactor > 0) {
+        const imageData = ctx.createImageData(canvas.width, canvas.height);
+        const data = imageData.data;
+        
+        for (let py = 0; py < canvas.height; py++) {
+            for (let px = 0; px < canvas.width; px++) {
+                const gy = py / cellHeight;
+                const gx = px / cellWidth;
+                
+                const value = bicubicInterpolation(gx, gy);
+                const color = viridisColor(value);
+                const rgb = color.match(/\d+/g);
+                const r = parseInt(rgb[0]);
+                const g = parseInt(rgb[1]);
+                const b = parseInt(rgb[2]);
+                
+                const index = (py * canvas.width + px) * 4;
+                data[index] = r;
+                data[index+1] = g;
+                data[index+2] = b;
+                data[index+3] = 255;
+            }
+        }
+        
+        ctx.putImageData(imageData, 0, 0);
+    } else {
+        const imageData = ctx.createImageData(canvas.width, canvas.height);
+        const data = imageData.data;
+        
+        for (let i = 0; i < GRID_HEIGHT; i++) {
+            for (let j = 0; j < GRID_WIDTH; j++) {
+                const value = grid[i][j];
+                const color = viridisColor(value);
+                const rgb = color.match(/\d+/g);
+                const r = parseInt(rgb[0]);
+                const g = parseInt(rgb[1]);
+                const b = parseInt(rgb[2]);
+                
+                const x = Math.floor(j * cellWidth);
+                const y = Math.floor(i * cellHeight);
+                const width = Math.ceil(cellWidth);
+                const height = Math.ceil(cellHeight);
+                
+                for (let dy = 0; dy < height; dy++) {
+                    for (let dx = 0; dx < width; dx++) {
+                        const px = (y + dy) * canvas.width + (x + dx);
+                        const index = px * 4;
+                        
+                        if (index + 3 < data.length) { 
+                            data[index] = r;
+                            data[index+1] = g;
+                            data[index+2] = b;
+                            data[index+3] = 255;
+                        }
                     }
                 }
             }
         }
+        
+        ctx.putImageData(imageData, 0, 0);
     }
-    
-    // Dessiner l'image en une seule opération
-    ctx.putImageData(imageData, 0, 0);
 }
-
 function evolve() {
 	const potentials = convolveKernels.map(kernel => convolve(grid, kernel));
 	
@@ -696,7 +754,6 @@ function evolve() {
 		}
 	}
 	
-	// Échange des grilles
 	const temp = grid;
 	grid = nextGrid;
 	nextGrid = temp;
@@ -735,7 +792,6 @@ function animate(timestamp) {
 	const delta = timestamp - lastTimestamp;
 	lastTimestamp = timestamp;
 	
-	// Calcul du FPS
 	frameTimes.push(delta);
 	if (frameTimes.length > 10) frameTimes.shift();
 	const avgFrameTime = frameTimes.reduce((a, b) => a + b, 0) / frameTimes.length;
@@ -789,7 +845,6 @@ window.addEventListener('resize', () => {
 });
 
 // Initialisation
-if (handleCanvasResize()) {}
 createParameterControls();
 initKernels();
 initSimulation();
