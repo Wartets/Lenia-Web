@@ -789,7 +789,7 @@ window.addEventListener('resize', () => {
 });
 
 // Initialisation
-handleCanvasResize()
+if (handleCanvasResize()) {}
 createParameterControls();
 initKernels();
 initSimulation();
