@@ -1,177 +1,454 @@
+/* Constantes de couleur pour le thème sombre Liquid Glass */
+:root {
+    /* Couleurs principales */
+    --bg-primary: #0c0e15;
+    --bg-secondary: #121826;
+    --bg-tertiary: #1a2236;
+    --accent-primary: #4a8cff;
+    --accent-secondary: #8a5cf6;
+    --text-primary: #e6f1ff;
+    --text-secondary: #a0b3c9;
+    --text-tertiary: #6c7d94;
+    
+    /* Couleurs spéciales */
+    --glass-effect: rgba(30, 41, 59, 0.65);
+    --glass-border: rgba(99, 102, 241, 0.15);
+    --shadow-primary: rgba(2, 6, 23, 0.7);
+    
+    /* Éléments UI */
+    --button-primary: #4a8cff;
+    --button-hover: #3a7cff;
+    --button-danger: #ff5c7c;
+    --button-danger-hover: #ff3a60;
+    --button-disabled: #334155;
+    
+    /* Canvas */
+    --canvas-bg: #000;
+    --canvas-border: rgba(99, 102, 241, 0.25);
+    
+    /* Viridis color map */
+    --viridis-1: #440154;
+    --viridis-2: #482475;
+    --viridis-3: #414487;
+    --viridis-4: #35608D;
+    --viridis-5: #2A788E;
+    --viridis-6: #21908D;
+    --viridis-7: #22A884;
+    --viridis-8: #42BE71;
+    --viridis-9: #7AD151;
+    --viridis-10: #BBDF27;
+    --viridis-11: #FDE725;
+}
+
 * {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-	background-color: #f0f2f5;
-	color: #333;
-	line-height: 1.6;
+    font-family: 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(25, 39, 70, 0.3) 0%, transparent 25%),
+        radial-gradient(circle at 90% 80%, rgba(74, 140, 255, 0.15) 0%, transparent 25%);
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
 header {
-	background-color: #2c3e50;
-	color: white;
-	padding: 1rem;
-	text-align: center;
-	box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    background: var(--glass-effect);
+    backdrop-filter: blur(12px);
+    color: var(--text-primary);
+    padding: 1rem;
+    text-align: center;
+    box-shadow: 0 2px 15px var(--shadow-primary);
+    border-bottom: 1px solid var(--glass-border);
+    position: relative;
+    z-index: 10;
+}
+
+header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
+    box-shadow: 0 0 15px var(--accent-primary);
 }
 
 .main-container {
-	display: flex;
-	padding: 20px;
-	gap: 20px;
-	max-width: 1800px;
-	margin: 0 auto;
+    display: flex;
+    padding: 20px;
+    gap: 20px;
+    max-width: 1800px;
+    margin: 0 auto;
 }
 
 .canvas-container {
-	flex: 1;
-	background: white;
-	border-radius: 8px;
-	box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-	padding: 15px;
-	display: flex;
-	justify-content: center;
-	align-items: center;
+    flex: 1;
+    background: var(--bg-tertiary);
+    border-radius: 16px;
+    box-shadow: 0 8px 30px var(--shadow-primary);
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--glass-border);
+}
+
+.canvas-container::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: 16px;
+    background: linear-gradient(45deg, var(--viridis-1), var(--viridis-5), var(--viridis-9));
+    z-index: -1;
 }
 
 canvas {
-	max-width: 100%;
-	height: auto;
-	border: 1px solid #ddd;
-	background: #000;
+    max-width: 100%;
+    height: auto;
+    border: 1px solid var(--canvas-border);
+    background: var(--canvas-bg);
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
 .controls-container {
-	width: 350px;
-	display: flex;
-	flex-direction: column;
-	gap: 20px;
+    width: 350px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .params-panel, .actions-panel {
-	background: white;
-	border-radius: 8px;
-	padding: 20px;
-	box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    background: var(--glass-effect);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 8px 30px var(--shadow-primary);
+    border: 1px solid var(--glass-border);
+    position: relative;
+    overflow: hidden;
+}
+
+.params-panel::before, .actions-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
+    box-shadow: 0 0 10px var(--accent-primary);
 }
 
 .params-panel h2, .actions-panel h2 {
-	margin-bottom: 15px;
-	padding-bottom: 10px;
-	border-bottom: 1px solid #eee;
-	color: #2c3e50;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    font-weight: 600;
+    letter-spacing: -0.25px;
 }
 
 .remap-controls {
-	display: flex;
-	flex-direction: column;
-	gap: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
 }
 
 .remap-controls label {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
 }
 
+/* Amélioration des sliders pour plus de contraste */
 .remap-controls input[type="range"] {
-	width: 70%;
+    width: 70%;
+    background: linear-gradient(to right, var(--bg-tertiary), var(--accent-primary));
+    border-radius: 10px;
+    height: 8px;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.remap-controls input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent-primary);
+    cursor: pointer;
+    box-shadow: 0 0 0 2px var(--bg-tertiary), 0 0 10px var(--accent-primary);
+    transition: all 0.2s ease;
+}
+
+.remap-controls input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 2px var(--bg-tertiary), 0 0 15px var(--accent-primary);
 }
 
 .buttons {
-	display: grid;
-	grid-template-columns: repeat(2, 1fr);
-	gap: 10px;
-	margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
 }
 
 button {
-	padding: 10px 15px;
-	background-color: #3498db;
-	color: white;
-	border: none;
-	border-radius: 4px;
-	cursor: pointer;
-	font-weight: bold;
-	transition: background-color 0.3s;
+    padding: 10px 15px;
+    background: var(--button-primary);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    letter-spacing: 0.25px;
+    box-shadow: 0 2px 8px rgba(74, 140, 255, 0.2); /* Glow réduit */
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.5s ease;
+    z-index: -1;
 }
 
 button:hover {
-	background-color: #2980b9;
+    background: var(--button-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(74, 140, 255, 0.3); /* Glow réduit */
+}
+
+button:hover::before {
+    transform: translateX(100%);
 }
 
 button:disabled {
-	background-color: #bdc3c7;
-	cursor: not-allowed;
+    background: var(--button-disabled);
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
 }
 
 #resetBtn {
-	background-color: #e74c3c;
+    background: var(--button-danger);
+    box-shadow: 0 2px 8px rgba(255, 92, 124, 0.2); /* Glow réduit */
 }
 
 #resetBtn:hover {
-	background-color: #c0392b;
+    background: var(--button-danger-hover);
+    box-shadow: 0 4px 12px rgba(255, 58, 96, 0.3); /* Glow réduit */
 }
 
 .simulation-type {
-	margin-bottom: 20px;
+    margin-bottom: 20px;
 }
 
 .simulation-type select {
-	width: 100%;
-	padding: 8px;
-	border-radius: 4px;
-	border: 1px solid #ddd;
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.simulation-type select:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 2px rgba(74, 140, 255, 0.25);
 }
 
 .status {
-	background-color: #f8f9fa;
-	padding: 15px;
-	border-radius: 4px;
-	border: 1px solid #eee;
+    background: var(--bg-tertiary);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    font-size: 0.9rem;
 }
 
 .status div {
-	margin-bottom: 8px;
+    margin-bottom: 12px;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: space-between;
 }
 
-/* Responsive */
-@media (max-width: 1200px) {
-	.main-container {
-		flex-direction: column;
-	}
-	
-	.controls-container {
-		width: 100%;
-		flex-direction: row;
-		flex-wrap: wrap;
-	}
-	
-	.params-panel, .actions-panel {
-		flex: 1;
-		min-width: 300px;
-	}
+.status div span {
+    color: var(--text-primary);
+    font-weight: 500;
 }
 
 .grid-size-controls, .kernel-controls {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-bottom: 15px;
+    gap: 12px;
+    margin-bottom: 18px;
 }
 
 .channel-control {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     align-items: center;
 }
 
 .channel-control label {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.dt-control {
+    margin: 18px 0;
+}
+
+/* Boutons de channel plus petits */
+.channel-buttons {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.channel-buttons button {
+    flex: 1;
+    padding: 8px 10px;
+    font-size: 0.85em;
+    border-radius: 8px;
+}
+
+/* Amélioration des champs numériques */
+input[type="number"] {
+    width: 80px;
+    text-align: center;
+    padding: 8px 10px;
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+input[type="number"]:focus {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 2px rgba(74, 140, 255, 0.25);
+    outline: none;
+}
+
+/* Style des flèches dans les champs numériques */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+    position: relative;
+}
+
+input[type="number"]::-webkit-inner-spin-button:after,
+input[type="number"]::-webkit-outer-spin-button:after {
+    content: "▲";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 50%;
+    width: 16px;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    text-align: center;
+    font-size: 8px;
+    line-height: 16px;
+    border-left: 1px solid var(--glass-border);
+    cursor: pointer;
+}
+
+input[type="number"]::-webkit-outer-spin-button:after {
+    content: "▼";
+    top: 50%;
+    bottom: 0;
+}
+
+/* Style pour les inputs de fraction */
+.fraction-input {
+    width: 80px;
+    text-align: center;
+    padding: 8px 10px;
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.bs-channel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+/* Effets Liquid Glass supplémentaires */
+@keyframes floating {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+    100% { transform: translateY(0px); }
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .main-container {
+        flex-direction: column;
+    }
+    
+    .controls-container {
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    
+    .params-panel, .actions-panel {
+        flex: 1;
+        min-width: 300px;
+    }
+}
+
+/* Dégradés et reflets Liquid Glass */
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 30%, rgba(138, 92, 246, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(74, 140, 255, 0.1) 0%, transparent 40%);
+    pointer-events: none;
+    z-index: -1;
 }
