@@ -96,6 +96,10 @@
 	
 <div class="theory-container">
         <section class="theory-section">
+        <h1>Lenia: Mathematical Foundations of Continuous Cellular Automata</h1>
+		
+        <p class="subtitle">A Comprehensive Scientific Exposition on the Generalized Continuous Cellular Automata Framework</p>
+		
             <h2>1. Introduction to Lenia</h2>
             <p>
                 <strong>Lenia</strong> (from Latin "lenis" meaning "smooth") is a family of continuous cellular automata introduced by <a href="https://arxiv.org/abs/1812.05433" target="_blank">Bert Wang-Chak Chan in 2018</a>. This groundbreaking framework extends Conway's classic Game of Life into a continuous domain with real-valued states, continuous space-time, and generalized local rules. Unlike classical cellular automata that operate on discrete lattices with binary states, Lenia evolves in a continuous environment, producing remarkably complex, lifelike patterns that exhibit self-organization, mobility, and even apparent behaviors reminiscent of biological organisms.
@@ -184,16 +188,15 @@
             
             <p>
                 where:
-                <ul>
-                    <li><code>A(\mathbf{x}, t) \in [0,1]</code> is the state field at position \(\mathbf{x}\) and time \(t\)</li>
-                    <li><code>K(\mathbf{r})</code> is the kernel function that defines local interactions</li>
-                    <li><code>*</code> denotes the convolution operation: \((K * A)(\mathbf{x}, t) = \int K(\mathbf{r}) A(\mathbf{x} - \mathbf{r}, t)  d\mathbf{r}\)</li>
-                    <li><code>G(u): \mathbb{R} \to [-1,1]</code> is the growth mapping function</li>
-                    <li><code>\Delta t</code> is the discrete time step (typically 0.1)</li>
-                    <li><code>[\cdot]_0^1</code> denotes clipping to the interval [0,1]</li>
-                </ul>
             </p>
-            
+            <ul>
+                <li>\( A(\mathbf{x}, t) \in [0,1] \) is the state field at position \( \mathbf{x} \) and time \( t \)</li>
+                <li>\( K(\mathbf{r}) \) is the kernel function that defines local interactions</li>
+                <li>\( * \) denotes the convolution operation: \( (K * A)(\mathbf{x}, t) = \int K(\mathbf{r}) A(\mathbf{x} - \mathbf{r}, t)  d\mathbf{r} \)</li>
+                <li>\( G(u): \mathbb{R} \to [-1,1] \) is the growth mapping function</li>
+                <li>\( \Delta t \) is the discrete time step (typically 0.1)</li>
+                <li>\( [\cdot]_0^1 \) denotes clipping to the interval [0,1]</li>
+            </ul>
             <p>
                 This equation describes a reaction-diffusion system where the change in state is proportional to the convolution of the current state with a kernel, transformed by a growth function. The convolution operation \(K * A\) computes a weighted average of neighboring states, serving as a "perception" field that determines the growth at each point.
             </p>
@@ -205,7 +208,7 @@
             
 			<div class="equation-block">
 				\[
-				K(\mathbf{r}) = \frac{1}{\|\mathbf{BS}\|} \sum_{n=0}^{N-1} BS_n \cdot \exp\left( -\frac{\left( \frac{\|\mathbf{r}\|}{R} - \frac{n+0.5}{N} \right)^2}{2\sigma_{\text{kern}}^2} \right)
+				K(\mathbf{r}) = \dfrac{1}{\|\mathbf{BS}\|} \sum_{n=0}^{N-1} BS_n \cdot \exp\left( -\dfrac{\left( \dfrac{\|\mathbf{r}\|}{R} - \dfrac{n+0.5}{N} \right)^2}{2\sigma_{\text{kern}}^2} \right)
 				\]
 				<span class="equation-label">Equation 2: Kernel Definition</span>
 			</div>
@@ -216,7 +219,7 @@
                     <li><strong>R</strong>: Kernel radius (distance of influence, typically 5-20 cells)</li>
                     <li><strong>BS</strong>: Ring coefficients vector (e.g., [1, 0.5, 0.25])</li>
                     <li><strong>N</strong>: Number of rings (length of BS vector)</li>
-                    <li><strong>c<sub>n</sub></strong>: Center of the n-th ring, \(c_n = \frac{n + 0.5}{N}\)</li>
+                    <li><strong>c<sub>n</sub></strong>: Center of the n-th ring, \(c_n = \dfrac{n + 0.5}{N}\)</li>
                     <li><strong>σ<sub>kern</sub></strong>: Width of each Gaussian ring (typically 0.15)</li>
                     <li><strong>‖BS‖</strong>: Normalization factor ensuring \(\int K(\mathbf{r}) d\mathbf{r} = 1\)</li>
                 </ul>
@@ -242,7 +245,7 @@
             
             <div class="equation-block">
                 \[
-                G(u; \mu, \sigma_{\text{grow}}) = 2 \cdot \exp\left( -\frac{(u - \mu)^2}{2\sigma_{\text{grow}}^2} \right) - 1
+                G(u; \mu, \sigma_{\text{grow}}) = 2 \cdot \exp\left( -\dfrac{(u - \mu)^2}{2\sigma_{\text{grow}}^2} \right) - 1
                 \]
                 <span class="equation-label">Equation 3: Growth Function</span>
             </div>
@@ -279,7 +282,7 @@
             
             <div class="equation-block">
                 \[
-                A(t + \Delta t) = \left[ A(t) + \Delta t \cdot \frac{1}{C} \sum_{c=1}^{C} G_c\left( (K_c * A)(\mathbf{x}, t) \right) \right]_0^1
+                A(t + \Delta t) = \left[ A(t) + \Delta t \cdot \dfrac{1}{C} \sum_{c=1}^{C} G_c\left( (K_c * A)(\mathbf{x}, t) \right) \right]_0^1
                 \]
                 <span class="equation-label">Equation 4: Multichannel Lenia</span>
             </div>
@@ -310,7 +313,7 @@
             
             <div class="equation-block">
                 \[
-                \frac{\partial A}{\partial t} = G(K * A) \approx G(K * A^*) + G'(K * A^*) \cdot K * (A - A^*)
+                \dfrac{\partial A}{\partial t} = G(K * A) \approx G(K * A^*) + G'(K * A^*) \cdot K * (A - A^*)
                 \]
             </div>
             
@@ -405,7 +408,7 @@
             <p>
                 where:
                 <ul>
-                    <li>\(\text{remap}_1(a; k) = \frac{1}{2} + \frac{1}{\pi} \arctan(k(2a - 1))\) (sigmoidal contrast enhancement)</li>
+                    <li>\(\text{remap}_1(a; k) = \dfrac{1}{2} + \dfrac{1}{\pi} \arctan(k(2a - 1))\) (sigmoidal contrast enhancement)</li>
                     <li>\(\text{remap}_2(a) = 4a(1 - a)\) (quadratic enhancement)</li>
                     <li>\(k\): Sharpness parameter (typically 4-10)</li>
                     <li>\(\alpha\): Mixing ratio between remap functions (typically 0.5)</li>
@@ -544,7 +547,7 @@ function updateLenia(grid, params, dt) {
             
             <div class="equation-block">
                 \[
-                \frac{\partial A}{\partial t} = D \nabla^2 A + R(A)
+                \dfrac{\partial A}{\partial t} = D \nabla^2 A + R(A)
                 \]
                 <span class="equation-label">Equation 5: Reaction-Diffusion Analogy</span>
             </div>
