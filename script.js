@@ -50,7 +50,7 @@ document.getElementById('autoMode').addEventListener('change', (e) => {
 
 document.getElementById('interpolationSlider').addEventListener('input', (e) => {
     interpolationFactor = parseFloat(e.target.value);
-    document.getElementById('interpolationValue').textContent = interpolationFactor.toFixed(2);
+    document.getElementById('interpolationValue').textContent = interpolationFactor.toFixed(1);
     drawGrid();
 });
 
