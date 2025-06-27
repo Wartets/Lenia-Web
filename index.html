@@ -5,6 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Lenia</title>
 	<link rel="stylesheet" href="style.css" />
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
 	<header>
@@ -93,6 +94,620 @@
 		</div>
 	</div>
 	
+<div class="theory-container">
+        <section class="theory-section">
+            <h2>1. Introduction to Lenia</h2>
+            <p>
+                <strong>Lenia</strong> (from Latin "lenis" meaning "smooth") is a family of continuous cellular automata introduced by <a href="https://arxiv.org/abs/1812.05433" target="_blank">Bert Wang-Chak Chan in 2018</a>. This groundbreaking framework extends Conway's classic Game of Life into a continuous domain with real-valued states, continuous space-time, and generalized local rules. Unlike classical cellular automata that operate on discrete lattices with binary states, Lenia evolves in a continuous environment, producing remarkably complex, lifelike patterns that exhibit self-organization, mobility, and even apparent behaviors reminiscent of biological organisms.
+            </p>
+            
+            <p>
+                The significance of Lenia lies in its ability to generate "life-like" artificial organisms with unprecedented diversity and complexity while maintaining relatively simple mathematical rules. These digital organisms, termed "Lenia lifeforms," demonstrate properties such as:
+            </p>
+            
+            <ul>
+                <li>Self-stabilization and homeostasis</li>
+                <li>Self-replication and reproduction</li>
+                <li>Complex morphogenesis and development</li>
+                <li>Emergent locomotion and behavior</li>
+                <li>Environmental interaction and adaptation</li>
+            </ul>
+            
+            <p>
+                Chan's original research has revealed over 400 distinct species of Lenia lifeforms, many exhibiting remarkable similarities to biological structures such as radiolarians, cnidarians, and annelids. The continuous nature of Lenia allows for the emergence of smooth, organic-looking patterns that are difficult to achieve with discrete cellular automata.
+            </p>
+            
+            <h3>1.1. Philosophical and Scientific Context</h3>
+            <p>
+                Lenia exists at the intersection of several scientific domains: artificial life, complex systems, mathematical biology, and computational emergence. It provides a mathematical framework for exploring fundamental questions about the nature of life, self-organization, and emergence. By demonstrating that complex, lifelike behaviors can emerge from simple continuous rules, Lenia challenges our understanding of what constitutes a "living" system and provides a testbed for studying the principles of complex adaptive systems.
+            </p>
+            
+            <p>
+                From a mathematical perspective, Lenia represents a generalization of several well-known systems:
+            </p>
+            
+            <ul>
+                <li><strong>Conway's Game of Life</strong> - As a discrete, binary-state special case</li>
+                <li><strong>Reaction-Diffusion Systems</strong> - Such as the Gray-Scott and Turing patterns</li>
+                <li><strong>Neural Cellular Automata</strong> - With continuous activation functions</li>
+                <li><strong>Continuous Integrate-and-Fire Models</strong> - In computational neuroscience</li>
+            </ul>
+            
+           <!--  <div class="visual-example">
+                <div class="example-item">
+                    <h4>Orbium</h4>
+                    <div style="width:100%;height:200px;background:radial-gradient(circle, var(--viridis-9) 0%, var(--viridis-5) 30%, var(--viridis-3) 70%, var(--viridis-0) 100%);border-radius:50%;"></div>
+                    <p>The first discovered Lenia lifeform</p>
+                </div>
+                
+                <div class="example-item">
+                    <h4>Hydrogeminium natans</h4>
+                    <div style="width:100%;height:200px;background:
+                        linear-gradient(135deg, var(--viridis-0) 0%, transparent 20%),
+                        linear-gradient(225deg, var(--viridis-0) 0%, transparent 20%),
+                        linear-gradient(315deg, var(--viridis-0) 0%, transparent 20%),
+                        linear-gradient(45deg, var(--viridis-0) 0%, transparent 20%),
+                        radial-gradient(circle, var(--viridis-9) 0%, var(--viridis-5) 50%, transparent 70%);
+                        border-radius:10px;"></div>
+                    <p>A complex multi-structure organism</p>
+                </div>
+                
+                <div class="example-item">
+                    <h4>Spiralium</h4>
+                    <div style="width:100%;height:200px;background:
+                        conic-gradient(from 0deg at 50% 50%, 
+                        var(--viridis-0), var(--viridis-2), var(--viridis-5), var(--viridis-8), var(--viridis-0));
+                        border-radius:50%;
+                        transform: rotate(30deg);"></div>
+                    <p>Rotating spiral pattern</p>
+                </div>
+            </div> -->
+        </section>
+        
+        <section class="theory-section">
+            <h2>2. Mathematical Foundations</h2>
+            <p>
+                At its core, Lenia is defined by a set of partial differential equations that govern the evolution of a continuous state field over time. The mathematical model operates on a toroidal (wrapped) grid to eliminate boundary effects, with the state of each point represented by a real number in the interval [0, 1].
+            </p>
+            
+            <h3>2.1. Core Dynamical System</h3>
+            <p>
+                The fundamental update equation for Lenia is expressed as:
+            </p>
+            
+            <div class="equation-block">
+                \[ 
+                A(t + \Delta t) = \left[ A(t) + \Delta t \cdot G\left( (K * A)(\mathbf{x}, t) \right) \right]_0^1
+                \]
+                <span class="equation-label">Equation 1: Lenia State Update Rule</span>
+            </div>
+            
+            <p>
+                where:
+                <ul>
+                    <li><code>A(\mathbf{x}, t) \in [0,1]</code> is the state field at position \(\mathbf{x}\) and time \(t\)</li>
+                    <li><code>K(\mathbf{r})</code> is the kernel function that defines local interactions</li>
+                    <li><code>*</code> denotes the convolution operation: \((K * A)(\mathbf{x}, t) = \int K(\mathbf{r}) A(\mathbf{x} - \mathbf{r}, t)  d\mathbf{r}\)</li>
+                    <li><code>G(u): \mathbb{R} \to [-1,1]</code> is the growth mapping function</li>
+                    <li><code>\Delta t</code> is the discrete time step (typically 0.1)</li>
+                    <li><code>[\cdot]_0^1</code> denotes clipping to the interval [0,1]</li>
+                </ul>
+            </p>
+            
+            <p>
+                This equation describes a reaction-diffusion system where the change in state is proportional to the convolution of the current state with a kernel, transformed by a growth function. The convolution operation \(K * A\) computes a weighted average of neighboring states, serving as a "perception" field that determines the growth at each point.
+            </p>
+            
+            <h3>2.2. Kernel Construction</h3>
+            <p>
+                The kernel \(K\) is a radially symmetric function composed of Gaussian-like rings centered at each cell. Its general form is:
+            </p>
+            
+			<div class="equation-block">
+				\[
+				K(\mathbf{r}) = \frac{1}{\|\mathbf{BS}\|} \sum_{n=0}^{N-1} BS_n \cdot \exp\left( -\frac{\left( \frac{\|\mathbf{r}\|}{R} - \frac{n+0.5}{N} \right)^2}{2\sigma_{\text{kern}}^2} \right)
+				\]
+				<span class="equation-label">Equation 2: Kernel Definition</span>
+			</div>
+            
+            <p>
+                where:
+                <ul>
+                    <li><strong>R</strong>: Kernel radius (distance of influence, typically 5-20 cells)</li>
+                    <li><strong>BS</strong>: Ring coefficients vector (e.g., [1, 0.5, 0.25])</li>
+                    <li><strong>N</strong>: Number of rings (length of BS vector)</li>
+                    <li><strong>c<sub>n</sub></strong>: Center of the n-th ring, \(c_n = \frac{n + 0.5}{N}\)</li>
+                    <li><strong>σ<sub>kern</sub></strong>: Width of each Gaussian ring (typically 0.15)</li>
+                    <li><strong>‖BS‖</strong>: Normalization factor ensuring \(\int K(\mathbf{r}) d\mathbf{r} = 1\)</li>
+                </ul>
+            </p>
+            
+            <p>
+                The radial symmetry is crucial as it ensures isotropic behavior (rotation invariance). The kernel is typically truncated at distance R to create a finite neighborhood, with values smoothly approaching zero at the boundary to avoid discontinuities.
+            </p>
+            
+            <div class="diagram-container">
+                <div style="width:100%;height:300px;background: 
+                    radial-gradient(circle at center, transparent 0%, var(--viridis-3) 10%, transparent 20%),
+                    radial-gradient(circle at center, transparent 30%, var(--viridis-5) 40%, transparent 50%),
+                    radial-gradient(circle at center, transparent 60%, var(--viridis-7) 70%, transparent 80%);
+                    border-radius:10px;"></div>
+                <p class="diagram-caption">Fig. 1: Visualization of a 3-ring kernel with coefficients [1, 0.6, 0.3]</p>
+            </div>
+            
+            <h3>2.3. Growth Function</h3>
+            <p>
+                The growth function \(G\) is a unimodal function centered around a preferred activation value μ. Its standard form is a Gaussian "bump" function:
+            </p>
+            
+            <div class="equation-block">
+                \[
+                G(u; \mu, \sigma_{\text{grow}}) = 2 \cdot \exp\left( -\frac{(u - \mu)^2}{2\sigma_{\text{grow}}^2} \right) - 1
+                \]
+                <span class="equation-label">Equation 3: Growth Function</span>
+            </div>
+            
+            <p>
+                where:
+                <ul>
+                    <li><strong>μ ∈ [0,1]</strong>: Center of the growth window (optimal activation level)</li>
+                    <li><strong>σ<sub>grow</sub> > 0</strong>: Width of the growth window</li>
+                </ul>
+            </p>
+            
+            <p>
+                This function maps the convolution result \(u = (K * A)(\mathbf{x}, t)\) to a growth value in [-1,1]. The Gaussian form creates a "Goldilocks zone" where growth is positive near μ and negative elsewhere, enabling self-regulation and pattern stability.
+            </p>
+            
+            <div class="diagram-container">
+                <div style="width:100%;height:300px;position:relative;">
+                    <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:var(--bg-tertiary);border-radius:10px;">
+                        <div style="position:absolute;bottom:0;width:100%;height:80%;" id="growth-function-plot"></div>
+                    </div>
+                </div>
+                <p class="diagram-caption">Fig. 2: Growth function G(u) with μ=0.35, σ=0.15</p>
+            </div>
+        </section>
+        
+        <section class="theory-section">
+            <h2>3. Advanced Mathematical Framework</h2>
+            
+            <h3>3.1. Multichannel Generalization</h3>
+            <p>
+                The true power of Lenia emerges in its multichannel generalization, where multiple kernels and growth functions interact:
+            </p>
+            
+            <div class="equation-block">
+                \[
+                A(t + \Delta t) = \left[ A(t) + \Delta t \cdot \frac{1}{C} \sum_{c=1}^{C} G_c\left( (K_c * A)(\mathbf{x}, t) \right) \right]_0^1
+                \]
+                <span class="equation-label">Equation 4: Multichannel Lenia</span>
+            </div>
+            
+            <p>
+                Each channel c has independent parameters:
+                <ul>
+                    <li>Kernel parameters: \(R_c\), \(\mathbf{BS}_c\), \(\sigma_{\text{kern},c}\)</li>
+                    <li>Growth parameters: \(\mu_c\), \(\sigma_{\text{grow},c}\)</li>
+                </ul>
+            </p>
+            
+            <p>
+                The multichannel approach enables complex interactions similar to chemical reaction networks, where each channel represents a different "substance" or "influence." The final growth is the average of all channel growths, allowing for:
+            </p>
+            
+            <ul>
+                <li>Multiple spatial scales of interaction</li>
+                <li>Competitive or cooperative dynamics</li>
+                <li>Hierarchical organization</li>
+                <li>Emergent computation through channel interactions</li>
+            </ul>
+            
+            <h3>3.2. Stability Analysis</h3>
+            <p>
+                The stability of Lenia patterns can be analyzed through linear stability analysis around fixed points. Consider a homogeneous steady state \(A(\mathbf{x}, t) = A^*\). The growth rate is:
+            </p>
+            
+            <div class="equation-block">
+                \[
+                \frac{\partial A}{\partial t} = G(K * A) \approx G(K * A^*) + G'(K * A^*) \cdot K * (A - A^*)
+                \]
+            </div>
+            
+            <p>
+                For stability, we examine the eigenvalues of the convolution operator. The Fourier transform of the linearized operator is:
+            </p>
+            
+            <div class="equation-block">
+                \[
+                \lambda(\mathbf{k}) = G'(0) \cdot \widehat{K}(\mathbf{k})
+                \]
+            </div>
+            
+            <p>
+                where \(\widehat{K}(\mathbf{k})\) is the Fourier transform of the kernel. Patterns emerge when \(\Re(\lambda(\mathbf{k})) > 0\) for some wavevector \(\mathbf{k}\), indicating instability of the homogeneous state.
+            </p>
+            
+            <h3>3.3. Conservation Laws and Symmetries</h3>
+            <p>
+                Lenia exhibits several important mathematical properties:
+            </p>
+            
+            <ul>
+                <li><strong>Mass Conservation</strong>: The growth function satisfies \(G(0) = -1\), \(G(1) = -1\), creating natural boundaries at 0 and 1.</li>
+                <li><strong>Translational Invariance</strong>: The system is invariant under spatial translations due to the convolution operation.</li>
+                <li><strong>Rotational Symmetry</strong>: Radial kernels ensure rotational invariance.</li>
+                <li><strong>Time Reversibility</strong>: For small \(\Delta t\), the system is approximately reversible.</li>
+            </ul>
+            
+            <h3>3.4. Parameter Space Exploration</h3>
+            <p>
+                Lenia's parameter space is high-dimensional, with key dimensions including:
+            </p>
+            
+            <table class="parameter-table">
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Typical Range</th>
+                        <th>Effect on Dynamics</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Kernel Radius (R)</td>
+                        <td>5-20</td>
+                        <td>Determines spatial scale of interactions</td>
+                    </tr>
+                    <tr>
+                        <td>Ring Coefficients (BS)</td>
+                        <td>Array of weights</td>
+                        <td>Controls kernel shape and interaction profile</td>
+                    </tr>
+                    <tr>
+                        <td>Kernel Width (σ<sub>kern</sub>)</td>
+                        <td>0.05-0.3</td>
+                        <td>Affects smoothness of kernel transitions</td>
+                    </tr>
+                    <tr>
+                        <td>Growth Center (μ)</td>
+                        <td>0.1-0.9</td>
+                        <td>Sets optimal activation level</td>
+                    </tr>
+                    <tr>
+                        <td>Growth Width (σ<sub>grow</sub>)</td>
+                        <td>0.01-0.2</td>
+                        <td>Controls sensitivity to activation changes</td>
+                    </tr>
+                    <tr>
+                        <td>Time Step (Δt)</td>
+                        <td>0.01-0.5</td>
+                        <td>Affects numerical stability and evolution speed</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        
+        <section class="theory-section">
+            <h2>4. Visualization and Representation</h2>
+            
+            <h3>4.1. Color Mapping</h3>
+            <p>
+                The continuous state values \(A(\mathbf{x}, t) \in [0,1]\) are mapped to colors using a modified Viridis colormap. The mapping is defined by a remap function:
+            </p>
+            
+            <div class="equation-block">
+                \[
+                \text{remap}(a; k, \alpha) = \alpha \cdot \text{remap}_1(a; k) + (1 - \alpha) \cdot \text{remap}_2(a)
+                \]
+            </div>
+            
+            <p>
+                where:
+                <ul>
+                    <li>\(\text{remap}_1(a; k) = \frac{1}{2} + \frac{1}{\pi} \arctan(k(2a - 1))\) (sigmoidal contrast enhancement)</li>
+                    <li>\(\text{remap}_2(a) = 4a(1 - a)\) (quadratic enhancement)</li>
+                    <li>\(k\): Sharpness parameter (typically 4-10)</li>
+                    <li>\(\alpha\): Mixing ratio between remap functions (typically 0.5)</li>
+                </ul>
+            </p>
+            
+            <!-- <p>
+                This composite mapping enhances contrast in critical regions while preserving smooth gradients:
+            </p>
+            
+            <div class="color-bar"></div>
+            <div class="color-scale">
+                <span>0.0</span>
+                <span>0.1</span>
+                <span>0.2</span>
+                <span>0.3</span>
+                <span>0.4</span>
+                <span>0.5</span>
+                <span>0.6</span>
+                <span>0.7</span>
+                <span>0.8</span>
+                <span>0.9</span>
+                <span>1.0</span>
+            </div> -->
+            
+            <h3>4.2. Advanced Rendering Techniques</h3>
+            <p>
+                For scientific visualization, several enhancements are employed:
+            </p>
+            
+            <ul>
+                <li><strong>Flow Visualization</strong>: Using optical flow algorithms to show motion vectors</li>
+                <li><strong>Isocontour Rendering</strong>: Highlighting specific state thresholds</li>
+                <li><strong>Temporal Superposition</strong>: Overlaying multiple time steps to show trajectories</li>
+                <li><strong>Spectral Analysis</strong>: Fourier transforms to reveal pattern frequencies</li>
+            </ul>
+        </section>
+        
+        <section class="theory-section">
+            <h2>5. Computational Implementation</h2>
+            
+            <p>
+                Efficient implementation of Lenia requires addressing several computational challenges:
+            </p>
+            
+            <h3>5.1. Algorithmic Optimizations</h3>
+            <p>
+                The computational complexity of direct convolution is \(O(N^2 M^2)\) for an \(N \times N\) grid and \(M \times M\) kernel. Key optimizations include:
+            </p>
+            
+            <ul>
+                <li><strong>Fast Fourier Transform (FFT)</strong>: Reducing convolution to \(O(N^2 \log N)\) via the convolution theorem</li>
+                <li><strong>Kernel Separation</strong>: Exploiting radial symmetry with Hankel transforms</li>
+                <li><strong>Approximate Methods</strong>: Using box filters or integral images for approximate convolution</li>
+            </ul>
+            
+            <pre>
+// Pseudocode for Lenia update step
+
+function updateLenia(grid, params, dt) {
+    // Precompute kernel in frequency domain
+    kernel_fft = FFT(precomputedKernel);
+    
+    for each channel c in channels {
+        // Convolution via FFT
+        grid_fft = FFT(grid);
+        conv_fft = grid_fft * kernel_fft[c];
+        U = IFFT(conv_fft);
+        
+        // Compute growth
+        growth = growth_function(U, params.mu[c], params.sigma[c]);
+        
+        // Accumulate growth from all channels
+        total_growth += growth;
+    }
+    
+    // Average growth across channels
+    total_growth /= channels.length;
+    
+    // Update grid with Euler integration
+    new_grid = grid + dt * total_growth;
+    
+    // Apply boundary conditions (toroidal)
+    new_grid = applyToroidalBoundary(new_grid);
+    
+    // Clip to [0,1]
+    return clamp(new_grid, 0, 1);
+}</pre>
+            
+            <h3>5.2. GPU Acceleration</h3>
+            <p>
+                Modern implementations leverage GPU parallelism through:
+            </p>
+            
+            <ul>
+                <li>WebGL fragment shaders for per-pixel computation</li>
+                <li>GPU.js for general-purpose GPU computing in JavaScript</li>
+                <li>CUDA or OpenCL implementations for native performance</li>
+            </ul>
+            
+            <h3>5.3. Numerical Stability Considerations</h3>
+            <p>
+                Maintaining stability requires careful handling of:
+            </p>
+            
+            <ul>
+                <li><strong>Time Integration</strong>: Adaptive step sizes or higher-order methods (Runge-Kutta)</li>
+                <li><strong>Spatial Discretization</strong>: Mitigating aliasing with proper sampling</li>
+                <li><strong>Boundary Conditions</strong>: Toroidal wrapping for periodic boundaries</li>
+            </ul>
+        </section>
+        
+        <section class="theory-section">
+            <h2>6. Biological and Philosophical Implications</h2>
+            
+            <p>
+                Lenia's ability to generate lifelike patterns raises profound questions about the nature of life and complexity:
+            </p>
+            
+            <h3>6.1. Artificial Life Perspectives</h3>
+            <p>
+                Lenia organisms demonstrate several properties characteristic of living systems:
+            </p>
+            
+            <ul>
+                <li><strong>Autopoiesis</strong>: Self-maintenance of organizational structure</li>
+                <li><strong>Adaptation</strong>: Responses to environmental perturbations</li>
+                <li><strong>Reproduction</strong>: Self-replication with inheritance of traits</li>
+                <li><strong>Phylogeny</strong>: Evolutionary relationships between different species</li>
+            </ul>
+            
+            <h3>6.2. Connection to Biological Systems</h3>
+            <p>
+                Mathematical parallels exist between Lenia and biological phenomena:
+            </p>
+            
+            <div class="equation-block">
+                \[
+                \frac{\partial A}{\partial t} = D \nabla^2 A + R(A)
+                \]
+                <span class="equation-label">Equation 5: Reaction-Diffusion Analogy</span>
+            </div>
+            
+            <p>
+                where \(D \nabla^2 A\) corresponds to the diffusion term (approximated by convolution) and \(R(A)\) to the growth function. This connection suggests Lenia as a generalized model for:
+            </p>
+            
+            <ul>
+                <li>Morphogenesis and pattern formation in embryology</li>
+                <li>Neural activation dynamics in brain tissue</li>
+                <li>Population dynamics in ecology</li>
+                <li>Excitable media in chemistry and physics</li>
+            </ul>
+            
+            <h3>6.3. Philosophical Considerations</h3>
+            <p>
+                Lenia challenges traditional boundaries between the inanimate and the living, prompting questions such as:
+            </p>
+            
+            <ul>
+                <li>What constitutes "life" in artificial systems?</li>
+                <li>How does complexity emerge from simple rules?</li>
+                <li>Can consciousness emerge in sufficiently complex artificial systems?</li>
+                <li>What are the fundamental principles of self-organization?</li>
+            </ul>
+            
+            <p class="citation">
+                "Lenia demonstrates that lifelike self-organizing patterns can emerge in a much wider universe of mathematical rules than previously thought." - Bert Wang-Chak Chan
+            </p>
+        </section>
+        
+        <section class="theory-section">
+            <h2>7. Current Research and Future Directions</h2>
+            
+            <p>
+                Ongoing research in Lenia and related systems includes:
+            </p>
+            
+            <ul>
+                <li><strong>Evolutionary Lenia</strong>: Using genetic algorithms to discover new lifeforms</li>
+                <li><strong>3D Lenia</strong>: Extending the framework to three dimensions</li>
+                <li><strong>Lenia Neural Networks</strong>: Combining with deep learning for pattern recognition</li>
+                <li><strong>Physical Implementations</strong>: Realizing Lenia in analog hardware or chemical systems</li>
+                <li><strong>Theoretical Analysis</strong>: Formal classification of Lenia's dynamical systems properties</li>
+            </ul>
+            
+            <h3>7.1. About This Implementation</h3>
+            <p>
+                This exposition and visualization framework is implemented entirely in JavaScript using HTML5 Canvas and GPU acceleration via GPU.js. It extends concepts from:
+                <ul>
+                    <li>Bert Chan's <a href="https://chakazul.github.io/lenia.html" target="_blank">original Lenia simulator</a></li>
+                    <li>The <a href="https://github.com/Wartets/Lenia-Simulation" target="_blank">Python implementation</a> by Wartets (author)</li>
+                </ul>
+            </p>
+            
+            <p>
+                The implementation supports real-time parameter adjustment, multi-channel configurations, and high-resolution rendering for scientific exploration of Lenia's parameter space.
+            </p>
+        </section>
+    </div>
+	
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			const canvas = document.createElement('canvas');
+			const container = document.getElementById('growth-function-plot');
+			canvas.width = container.clientWidth;
+			canvas.height = container.clientHeight;
+			container.appendChild(canvas);
+			
+			const ctx = canvas.getContext('2d');
+			const width = canvas.width;
+			const height = canvas.height;
+			const padding = 40;
+			
+			const gridColor = 'rgba(100, 230, 255, 0.15)';
+			const axesColor = 'rgba(170, 240, 255, 0.7)';
+			const textColor = 'rgb(180, 240, 255)';
+			const curveColor = 'rgb(0, 255, 255)';
+			const pointColor = 'rgb(0, 220, 200)';
+			
+			ctx.strokeStyle = gridColor;
+			ctx.lineWidth = 0.5;
+			
+			for (let x = padding; x <= width - padding; x += (width - 2*padding)/10) {
+				ctx.beginPath();
+				ctx.moveTo(x, padding);
+				ctx.lineTo(x, height - padding);
+				ctx.stroke();
+			}
+			
+			for (let y = padding; y <= height - padding; y += (height - 2*padding)/8) {
+				ctx.beginPath();
+				ctx.moveTo(padding, y);
+				ctx.lineTo(width - padding, y);
+				ctx.stroke();
+			}
+			
+			ctx.strokeStyle = axesColor;
+			ctx.lineWidth = 2;
+			ctx.beginPath();
+			ctx.moveTo(padding, padding);
+			ctx.lineTo(padding, height - padding);
+			ctx.lineTo(width - padding, height - padding);
+			ctx.stroke();
+			
+			ctx.fillStyle = textColor;
+			ctx.font = '12px Arial';
+			ctx.fillText('0', padding - 10, height - padding + 15);
+			ctx.fillText('0.5', width/2 - 10, height - padding + 15);
+			ctx.fillText('1', width - padding - 5, height - padding + 15);
+			ctx.fillText('1', padding - 15, padding + 10);
+			ctx.fillText('0', padding - 15, height/2 + 5);
+			ctx.fillText('-1', padding - 18, height - padding);
+			
+			ctx.fillText('u (Activation)', width/2 - 25, height - padding + 30);
+			ctx.save();
+			ctx.translate(5, height/2);
+			ctx.rotate(-Math.PI/2);
+			ctx.fillText('G(u) (Growth)',  0, 10);
+			ctx.restore();
+			
+			const mu = 0.35;
+			const sigma = 0.15;
+			
+			function growthFunc(u) {
+				return 2 * Math.exp(-Math.pow(u - mu, 2) / (2 * Math.pow(sigma, 2))) - 1;
+			}
+			
+			ctx.strokeStyle = curveColor;
+			ctx.lineWidth = 3;
+			ctx.beginPath();
+			
+			for (let i = 0; i <= width - 2*padding; i++) {
+				const u = i / (width - 2*padding);
+				const g = growthFunc(u);
+				
+				const x = padding + i;
+				const y = height - padding - (g + 1)/2 * (height - 2*padding);
+				
+				if (i === 0) {
+					ctx.moveTo(x, y);
+				} else {
+					ctx.lineTo(x, y);
+				}
+			}
+			
+			ctx.stroke();
+			
+			ctx.fillStyle = pointColor;
+			const muX = padding + mu * (width - 2*padding);
+			const muY = height - padding - (growthFunc(mu) + 1)/2 * (height - 2*padding);
+			ctx.beginPath();
+			ctx.arc(muX, muY, 6, 0, Math.PI * 2);
+			ctx.fill();
+			
+			ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+			ctx.beginPath();
+			ctx.arc(muX - 2, muY - 2, 2, 0, Math.PI * 2);
+			ctx.fill();
+		});
+	</script>
+
 	<footer>
 		<p>&copy; 2025. All rights reserved. Designed by 
 			<a href="https://wartets.github.io/Wartets/" target="_blank">&#x2197;Wartets</a>.

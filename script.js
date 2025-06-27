@@ -721,6 +721,7 @@ function drawGrid() {
         ctx.putImageData(imageData, 0, 0);
     }
 }
+
 function evolve() {
 	const potentials = convolveKernels.map(kernel => convolve(grid, kernel));
 	
